@@ -77,7 +77,7 @@ class _CopyrightValidator(object):
     self._by_ext = {
         ".cpp": slash_copyright,
         ".h": slash_copyright,
-        ".js": _copyright_matcher("/*%s*/" % copyright),
+        ".js": _copyright_matcher("/*\n%s\n*/" % copyright),
         ".json": None,  # Comments not supported.
         ".md": _copyright_matcher("<!--\n%s\n-->\n" % copyright),
         ".py": _copyright_matcher('__copyright__ = """\n%s\n"""\n' % copyright),
