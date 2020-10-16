@@ -71,13 +71,13 @@ class _CopyrightValidator(object):
     copyright = copyright.strip("\n")
 
     # Hash copyrights work for most files.
-    self.default = _copyright_matcher(_prefix_copyright(copyright, "# "))
+    self._default = _copyright_matcher(_prefix_copyright(copyright, "# "))
 
     slash_copyright = _copyright_matcher(_prefix_copyright(copyright, "// "))
-    self.by_ext = {
+    self._by_ext = {
         ".cpp": slash_copyright,
         ".h": slash_copyright,
-        ".js": "/*\n%s\n*/" % copyright,
+        ".js": _copyright_matcher("/*\n%s\n*/" % copyright),
         ".json": None,  # Comments not supported.
         ".md": _copyright_matcher("<!--\n%s\n-->\n" % copyright),
         ".py": _copyright_matcher('__copyright__ = """\n%s\n"""\n' % copyright),
@@ -89,10 +89,10 @@ class _CopyrightValidator(object):
         return None
 
     _, ext = os.path.splitext(path)
-    if ext in self.by_ext:
-      return self.by_ext[ext]
+    if ext in self._by_ext:
+      return self._by_ext[ext]
 
-    return self.default
+    return self._default
 
   def validate(self, path):
     """Checks the file for a copyright, returning False on error."""
