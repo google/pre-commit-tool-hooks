@@ -73,13 +73,16 @@ class _CopyrightValidator(object):
     # Hash copyrights work for most files.
     self._default = _copyright_matcher(_prefix_copyright(copyright, "# "))
 
+    html_copyright =  _copyright_matcher("<!--\n%s\n-->\n" % copyright)
     slash_copyright = _copyright_matcher(_prefix_copyright(copyright, "// "))
     self._by_ext = {
         ".cpp": slash_copyright,
         ".h": slash_copyright,
+        ".html": html_copyright,
         ".js": _copyright_matcher("/*\n%s\n*/" % copyright),
+        ".ico": None,
         ".json": None,  # Comments not supported.
-        ".md": _copyright_matcher("<!--\n%s\n-->\n" % copyright),
+        ".md": html_copyright,
         ".py": _copyright_matcher('__copyright__ = """\n%s\n"""\n' % copyright),
     }
 
