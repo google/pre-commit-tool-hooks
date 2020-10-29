@@ -18,6 +18,11 @@ limitations under the License.
 
 This repository contains hooks for use with [pre-commit](pre-commit.com).
 
+## Table of contents
+
+<!-- toc -->
+<!-- tocstop -->
+
 ## Using pre-commit-tool-hooks with pre-commit
 
 Add this to your `.pre-commit-config.yaml`:
@@ -38,6 +43,8 @@ Verifies that files contain a copyright statement. Looks for a Google Apache 2.0
 license by default. To customize, pass `--copyright=<text>`, using `YYYY` for
 year substitution.
 
+In `.pre-commit-config.yaml`, put:
+
 ```yaml
 - id: check-copyright
   args:
@@ -45,4 +52,29 @@ year substitution.
       - |+
           Copyright YYYY my organization
           with multiple lines
+```
+
+### markdown-toc
+
+Generates a table of contents for Markdown files. This uses
+[jonschlinkert/markdown-toc](https://github.com/jonschlinkert/markdown-toc) with
+some adaptations for [Prettier](https://prettier.io/) pre-commit compatibility.
+
+The markdown-toc tool can still be used manually with Prettier, because Prettier
+will fix the bullet format, but during pre-commit the two will rewrite each
+other.
+
+In a markdown file, put:
+
+```md
+## Table of contents
+
+<!-- toc -->
+<!-- tocstop -->
+```
+
+In `.pre-commit-config.yaml`, put:
+
+```yaml
+- id: markdown-toc
 ```
