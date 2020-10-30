@@ -21,6 +21,14 @@ This repository contains hooks for use with [pre-commit](pre-commit.com).
 ## Table of contents
 
 <!-- toc -->
+
+## Table of contents
+
+-   [Using pre-commit-tool-hooks with pre-commit](#using-pre-commit-tool-hooks-with-pre-commit)
+-   [Hooks](#hooks)
+    -   [check-copyright](#check-copyright)
+    -   [markdown-toc](#markdown-toc)
+
 <!-- tocstop -->
 
 ## Using pre-commit-tool-hooks with pre-commit
@@ -29,7 +37,7 @@ Add this to your `.pre-commit-config.yaml`:
 
 ```yaml
 - repo: https://github.com/google/pre-commit-tool-hooks
-  rev: v1.0.0 # Use the rev you want to point at.
+  rev: v1.0.5 # Use the rev you want to point at.
   hooks:
       - id: check-copyright
       # - id: ...
@@ -56,25 +64,41 @@ In `.pre-commit-config.yaml`, put:
 
 ### markdown-toc
 
-Generates a table of contents for Markdown files. This uses
-[jonschlinkert/markdown-toc](https://github.com/jonschlinkert/markdown-toc) with
-some adaptations for [Prettier](https://prettier.io/) pre-commit compatibility.
-
-The markdown-toc tool can still be used manually with Prettier, because Prettier
-will fix the bullet format, but during pre-commit the two will rewrite each
-other.
+Generates a [Prettier](https://pretter.io)-compatible table of contents for
+Markdown files.
 
 In a markdown file, put:
 
 ```md
-## Table of contents
-
 <!-- toc -->
 <!-- tocstop -->
+```
+
+This will generate:
+
+```md
+<!-- toc -->
+
+## Table of contents
+
+-   [Header](#header)
+    -   [Sub-header](#sub-header)
+
+<!-- toc -->
 ```
 
 In `.pre-commit-config.yaml`, put:
 
 ```yaml
 - id: markdown-toc
+```
+
+When used with Prettier, it's recommended to specify the `tabWidth` in
+`.prettierrc.yaml` to match:
+
+```yaml
+overrides:
+    - files: '*.md'
+      options:
+          tabWidth: 4
 ```

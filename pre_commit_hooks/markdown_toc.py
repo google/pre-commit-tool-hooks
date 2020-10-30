@@ -24,45 +24,97 @@ import os
 import re
 import sys
 
+
 def _parse_args(argv=None):
     """Parses command-line arguments and flags."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('paths', metavar="PATH", nargs="+", help="One or more paths of files to check.")
+    parser.add_argument(
+        "paths",
+        metavar="PATH",
+        nargs="+",
+        help="One or more paths of files to check.",
+    )
     return parser.parse_args(args=argv)
 
 
+def anchor(label, used_anchors):
+    """Chooses the appropriate anchor name for a header label."""
+    anchor = label.lower().strip()
+    anchor = anchor.replace(' ', '-')
+    anchor = anchor.replace('\t', '--')
+    anchor = re.sub("[|$&`~=\\\/@+*!?({[\]})<>=.,;:'\"^]", "", anchor)
+
+    # Enumerate anchors when reused.
+    if anchor in used_anchors:
+      used_anchors[anchor] += 1
+      anchor = '%s-%d' % (anchor, used_anchors[anchor])
+    else:
+      used_anchors[anchor] = 0
+
+    return anchor
+
+
 def update_toc(path):
+    """Updates the table of contents for a file."""
     in_code_block = False
     with open(path) as f:
-      contents = f.read()
-    if '<!-- toc -->' not in contents:
-      return
+        contents = f.read()
+    if "<!-- toc -->" not in contents:
+        return
 
-    toc = ['<!-- toc -->\n\n## Table of contents\n']
-    prev_depth = 0
-    prev_header = '(first header)'
-    for line in contents.split('\n'):
-      # Skip code blocks.
-      if line.startswith('```'):
-        in_code_block = not in_code_block
-        continue
-      if in_code_block:
-        continue
+    toc = ["<!-- toc -->\n\n## Table of contents\n"]
+    used_anchors = {}
+    prev_depth = 1
+    prev_header = "(first header)"
+    for line in contents.split("\n"):
+        # Skip code blocks.
+        if line.startswith("```"):
+            in_code_block = not in_code_block
+            continue
+        if in_code_block:
+            continue
 
-      match = re.match(r'^(#+)\s*(.+)', line)
-      if not match:
-        continue
-      depth = len(match.group(1))
-      if depth - 1 > prev_depth:
-        return 'Header %q has depth %d, which is too deep versus previous header %q with with depth %d.' % (line, depth, prev_header, depth)
-      prev_depth = depth
-      prev_header = line
+        match = re.match(r"^(#+)\s*(.+)", line)
+        if not match:
+            continue
+        depth = len(match.group(1))
+        label = match.group(2)
 
-      toc.append('%s-   %s' % ('    ' * (depth-1), match.group(2)))
-    toc.append('\n<!-- tocstop -->')
+        if label.lower() == "table of contents":
+            continue
 
-    new_conents = re.sub('<!-- toc -->.*?<!-- tocstop -->', '\n'.join(toc), contents, count=1, flags=re.DOTALL)
-    print(new_conents)
+        if depth - 1 > prev_depth:
+            return (
+                "Header %q has depth %d, which is too deep versus previous "
+                "header %q with with depth %d."
+                % (line, depth, prev_header, depth)
+            )
+        prev_depth = depth
+        prev_header = line
+
+        if depth == 1:
+            # This is the doc title; exclude it.
+            continue
+
+        toc.append(
+            "%s-   [%s](#%s)" % ("    " * (depth - 2), label, anchor(label, used_anchors))
+        )
+
+    # Add a blank line after entries, if any.
+    if len(toc) > 1:
+        toc.append("")
+    toc.append("<!-- tocstop -->")
+
+    new_contents = re.sub(
+        "<!-- toc -->.*?<!-- tocstop -->",
+        "\n".join(toc),
+        contents,
+        count=1,
+        flags=re.DOTALL,
+    )
+    if new_contents != contents:
+        with open(path, "w") as f:
+            f.write(new_contents)
 
 
 def main(argv=None):
@@ -73,10 +125,9 @@ def main(argv=None):
 
     exit_code = 0
     for path in paths:
-      if not path.endswith('.md'):
-        continue
-      update_toc(path)
-    return 1
+        if not path.endswith(".md"):
+            continue
+        update_toc(path)
     return exit_code
 
 
