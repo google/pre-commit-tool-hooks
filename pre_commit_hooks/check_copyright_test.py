@@ -32,7 +32,8 @@ class TestCheckCopyright(unittest.TestCase):
         )
         self.assertEqual(validator._get_copyright("LICENSE"), None)
         self.assertEqual(
-            validator._get_copyright("foo.bar")[1], "# test\n",
+            validator._get_copyright("foo.bar")[1],
+            "# test\n",
         )
 
     @staticmethod
