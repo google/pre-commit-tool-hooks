@@ -45,4 +45,5 @@ year substitution.
       - |+
           Copyright YYYY my organization
           with multiple lines
+
 ```
