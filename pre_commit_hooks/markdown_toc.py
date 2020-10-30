@@ -40,16 +40,16 @@ def _parse_args(argv=None):
 def anchor(label, used_anchors):
     """Chooses the appropriate anchor name for a header label."""
     anchor = label.lower().strip()
-    anchor = anchor.replace(' ', '-')
-    anchor = anchor.replace('\t', '--')
+    anchor = anchor.replace(" ", "-")
+    anchor = anchor.replace("\t", "--")
     anchor = re.sub("[|$&`~=\\\/@+*!?({[\]})<>=.,;:'\"^]", "", anchor)
 
     # Enumerate anchors when reused.
     if anchor in used_anchors:
-      used_anchors[anchor] += 1
-      anchor = '%s-%d' % (anchor, used_anchors[anchor])
+        used_anchors[anchor] += 1
+        anchor = "%s-%d" % (anchor, used_anchors[anchor])
     else:
-      used_anchors[anchor] = 0
+        used_anchors[anchor] = 0
 
     return anchor
 
@@ -97,7 +97,8 @@ def update_toc(path):
             continue
 
         toc.append(
-            "%s-   [%s](#%s)" % ("    " * (depth - 2), label, anchor(label, used_anchors))
+            "%s-   [%s](#%s)"
+            % ("    " * (depth - 2), label, anchor(label, used_anchors))
         )
 
     # Add a blank line after entries, if any.

@@ -105,12 +105,7 @@ class TestMarkdownToc(unittest.TestCase):
             "-   [Bork](#bork-2)\n"
             "\n"
         )
-        body = (
-            "<!-- tocstop -->\n\n"
-            "## Bork\n\n"
-            "## Bork\n\n"
-            "## Bork\n\n"
-        )
+        body = "<!-- tocstop -->\n\n" "## Bork\n\n" "## Bork\n\n" "## Bork\n\n"
         before = header + body
         after = header + toc + body
         self._assert_contents(before, after)
