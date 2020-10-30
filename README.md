@@ -18,8 +18,6 @@ limitations under the License.
 
 This repository contains hooks for use with [pre-commit](pre-commit.com).
 
-## Table of contents
-
 <!-- toc -->
 
 ## Table of contents
