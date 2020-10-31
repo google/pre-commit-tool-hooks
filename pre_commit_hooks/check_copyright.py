@@ -95,6 +95,7 @@ def _parse_args(argv=None):
 
 class _CopyrightValidator(object):
     def __init__(self, copyright, skip_pattern, custom_formats):
+        """Initializes the list of copyright formats and skipped paths."""
         copyright = copyright.strip("\n")
         try:
             self._skip = re.compile(skip_pattern)
@@ -111,6 +112,14 @@ class _CopyrightValidator(object):
     def _add_format(
         self, copyright, path_pattern, prefix, per_line_prefix, suffix
     ):
+        """Adds a format, either from --custom_format or built-in.
+
+        This will reformat the standard copyright based on the prefix,
+        per_line_prefix, and suffix.
+
+        The output tuple contains a regex for paths, a regex for matching
+        copyrights, and the suggested copyright that will be printed.
+        """
         try:
             path_re = re.compile(path_pattern)
         except re.error as e:
