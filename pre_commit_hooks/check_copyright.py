@@ -44,7 +44,7 @@ _DEFAULT_SKIP_PATTERN = r"(?:^LICENSE|\.(?:ico|json))$"
 _BUILTIN_FORMATS = (
     (r"\.(cpp|h)$", "", "// ", ""),
     (r"\.(html|md)$", "<!--", "", "-->"),
-    (r"\.js$", "/**", " * ", " */"),
+    (r"\.js$", "/*", " * ", " */"),
     (r"\.py$", '__copyright__ = """', "", '"""'),
     # Hash-commented copyrights make a good default for most file types.
     ("", "", "# ", ""),
