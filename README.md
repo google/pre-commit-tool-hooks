@@ -84,7 +84,7 @@ Do:
       - ' */'
 ```
 
-Alternatively, to override default behavior and get formatting like:
+To instead get formatting like:
 
 ```js
 // Copyright
