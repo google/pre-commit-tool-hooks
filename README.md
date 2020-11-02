@@ -159,8 +159,8 @@ In `.pre-commit-config.yaml`, put:
 - id: markdown-toc
 ```
 
-When used with Prettier, it's recommended to specify the `tabWidth` in
-`.prettierrc.yaml` to match:
+This generates bullets with a four space indent. When used with Prettier, it's
+recommended to specify the `tabWidth` in `.prettierrc.yaml` to match:
 
 ```yaml
 overrides:
