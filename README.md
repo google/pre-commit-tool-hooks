@@ -24,7 +24,7 @@ Add this to your `.pre-commit-config.yaml`:
 
 ```yaml
 - repo: https://github.com/google/pre-commit-tool-hooks
-  rev: v1.0.0 # Use the rev you want to point at.
+  rev: v1.0.5 # Use the rev you want to point at.
   hooks:
       - id: check-copyright
       # - id: ...
@@ -46,4 +46,58 @@ year substitution.
           Copyright YYYY my organization
           with multiple lines
 
+```
+
+#### Customizing copyright formats
+
+`--custom_format` overrides copyright formatting for a given path pattern. It
+may be specified multiple times to override multiple path patterns. The first
+matching `--custom_format` will be used; if none match, the built-in copyright
+defaults will be used.
+
+`--custom_format` takes four arguments:
+
+1.  `PATH_PATTERN`: A path regex that must match the input path.
+2.  `PREFIX`: A prefix block for the copyright.
+3.  `PER_LINE_PREFIX`: The per-line prefix for the copyright.
+4.  `SUFFIX`: A suffix block for the copyright.
+
+If a prefix or suffix is not desired, pass an empty string.
+
+For example, to get JavaScript copyright formatting like:
+
+```js
+/**
+ * Copyright
+ */
+```
+
+Do:
+
+```yaml
+- id: check-copyright
+  args:
+      - --custom_format
+      - '\.js$'
+      - '/**'
+      - ' * '
+      - ' */'
+```
+
+To instead get formatting like:
+
+```js
+// Copyright
+```
+
+Do:
+
+```yaml
+- id: check-copyright
+  args:
+      - --custom_format
+      - '\.js$'
+      - ''
+      - '// '
+      - ''
 ```
