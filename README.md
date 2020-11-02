@@ -120,16 +120,25 @@ Do:
 Generates a [Prettier](https://pretter.io)-compatible table of contents for
 Markdown files.
 
-In a markdown file, put:
+In a markdown file, put the `<!-- toc -->` and `<!-- tocstop -->` markers to
+indicate where to put the table of contents:
 
 ```md
+# Document title
+
 <!-- toc -->
 <!-- tocstop -->
+
+## Header
+
+### Sub-header
 ```
 
-This will generate:
+This will generate a table of contents based on non-title headers:
 
 ```md
+# Document title
+
 <!-- toc -->
 
 ## Table of contents
@@ -138,6 +147,10 @@ This will generate:
     -   [Sub-header](#sub-header)
 
 <!-- toc -->
+
+## Header
+
+### Sub-header
 ```
 
 In `.pre-commit-config.yaml`, put:
