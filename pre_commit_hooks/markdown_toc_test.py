@@ -78,6 +78,28 @@ class TestMarkdownToc(unittest.TestCase):
         self._assert_contents(before, after)
         self._assert_contents(after, after)
 
+    def test_codeblock_toc(self):
+        header = "# Header\n\n<!-- toc -->"
+        toc = (
+            "\n\n## Table of contents\n\n"
+            "-   [Section](#section)\n"
+            "    -   [More](#more)\n"
+            "\n"
+        )
+        body = (
+            "<!-- tocstop -->\n\n"
+            "## Section\n\n"
+            "text\n\n"
+            "```\n"
+            "## Ignored\n"
+            "```\n"
+            "### More\n\n"
+        )
+        before = header + body
+        after = header + toc + body
+        self._assert_contents(before, after)
+        self._assert_contents(after, after)
+
     def test_weird_toc(self):
         header = "# Header\n\n<!-- toc -->"
         toc = (

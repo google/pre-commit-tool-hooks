@@ -40,9 +40,9 @@ def _parse_args(argv=None):
 def anchor(label, used_anchors):
     """Chooses the appropriate anchor name for a header label."""
     anchor = label.lower().strip()
+    # Imitate GFM anchors.
     anchor = anchor.replace(" ", "-")
-    anchor = anchor.replace("\t", "--")
-    anchor = re.sub("[|$&`~=\\\/@+*!?({[\]})<>=.,;:'\"^]", "", anchor)
+    anchor = re.sub("[!\"#$%&'()*+,./:;<=>?@[\\\\\\]^`{|}~]", "", anchor)
 
     # Enumerate anchors when reused.
     if anchor in used_anchors:
@@ -56,18 +56,21 @@ def anchor(label, used_anchors):
 
 def update_toc(path):
     """Updates the table of contents for a file."""
-    in_code_block = False
     with open(path) as f:
         contents = f.read()
     if "<!-- toc -->" not in contents:
         return
+    if "<!-- tocstop -->" not in contents:
+        return "Missing tocstop"
 
     toc = ["<!-- toc -->\n\n## Table of contents\n"]
     used_anchors = {}
     prev_depth = 1
     prev_header = "(first header)"
+    in_code_block = False
     for line in contents.split("\n"):
-        # Skip code blocks.
+        # Skip code blocks. TODO: Handle arbitrary fencing from
+        # https://github.github.com/gfm/#fenced-code-blocks
         if line.startswith("```"):
             in_code_block = not in_code_block
             continue
@@ -86,8 +89,7 @@ def update_toc(path):
         if depth - 1 > prev_depth:
             return (
                 "Header %q has depth %d, which is too deep versus previous "
-                "header %q with with depth %d."
-                % (line, depth, prev_header, depth)
+                "header %q with depth %d." % (line, depth, prev_header, depth)
             )
         prev_depth = depth
         prev_header = line
@@ -128,7 +130,10 @@ def main(argv=None):
     for path in paths:
         if not path.endswith(".md"):
             continue
-        update_toc(path)
+        msg = update_toc(path)
+        if msg:
+            print("Error in `%s`: %s" % (path, msg))
+            exit_code = 1
     return exit_code
 
 
