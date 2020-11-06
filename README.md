@@ -25,6 +25,7 @@ This repository contains hooks for use with [pre-commit](pre-commit.com).
 -   [Using pre-commit-tool-hooks with pre-commit](#using-pre-commit-tool-hooks-with-pre-commit)
 -   [Hooks](#hooks)
     -   [check-copyright](#check-copyright)
+        -   [Customizing copyright formats](#customizing-copyright-formats)
     -   [markdown-toc](#markdown-toc)
 
 <!-- tocstop -->
