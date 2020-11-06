@@ -24,6 +24,8 @@ import os
 import re
 import sys
 
+import mistune
+
 
 def _parse_args(argv=None):
     """Parses command-line arguments and flags."""
@@ -37,7 +39,22 @@ def _parse_args(argv=None):
     return parser.parse_args(args=argv)
 
 
-def anchor(label, used_anchors):
+def _make_label(tokens):
+    """Makes a label from a set of tokens. Handles joining common children."""
+    label = []
+    for token in tokens:
+        if token["type"] == "text":
+            label.append(token["text"])
+        elif token["type"] == "codespan":
+            label.extend(("`", token["text"], "`"))
+        elif token["type"] == "emphasis":
+            label.extend(("_", _make_label(token["children"]), "_"))
+        elif token["type"] == "strong":
+            label.extend(("**", _make_label(token["children"]), "**"))
+    return "".join(label)
+
+
+def _make_anchor(label, used_anchors):
     """Chooses the appropriate anchor name for a header label."""
     anchor = label.lower().strip()
     # Imitate GFM anchors.
@@ -54,7 +71,7 @@ def anchor(label, used_anchors):
     return anchor
 
 
-def update_toc(path):
+def _update_toc(path):
     """Updates the table of contents for a file."""
     with open(path) as f:
         contents = f.read()
@@ -68,20 +85,12 @@ def update_toc(path):
     prev_depth = 1
     prev_header = "(first header)"
     in_code_block = False
-    for line in contents.split("\n"):
-        # Skip code blocks. TODO: Handle arbitrary fencing from
-        # https://github.github.com/gfm/#fenced-code-blocks
-        if line.startswith("```"):
-            in_code_block = not in_code_block
+    md = mistune.Markdown(mistune.AstRenderer())
+    for token in md.parse(contents):
+        if token["type"] != "heading":
             continue
-        if in_code_block:
-            continue
-
-        match = re.match(r"^(#+)\s*(.+)", line)
-        if not match:
-            continue
-        depth = len(match.group(1))
-        label = match.group(2)
+        depth = token["level"]
+        label = _make_label(token["children"])
 
         if label.lower() == "table of contents":
             continue
@@ -89,10 +98,10 @@ def update_toc(path):
         if depth - 1 > prev_depth:
             return (
                 "Header %q has depth %d, which is too deep versus previous "
-                "header %q with depth %d." % (line, depth, prev_header, depth)
+                "header %q with depth %d." % (label, depth, prev_header, depth)
             )
         prev_depth = depth
-        prev_header = line
+        prev_header = label
 
         if depth == 1:
             # This is the doc title; exclude it.
@@ -100,7 +109,7 @@ def update_toc(path):
 
         toc.append(
             "%s-   [%s](#%s)"
-            % ("    " * (depth - 2), label, anchor(label, used_anchors))
+            % ("    " * (depth - 2), label, _make_anchor(label, used_anchors))
         )
 
     # Add a blank line after entries, if any.
@@ -130,7 +139,7 @@ def main(argv=None):
     for path in paths:
         if not path.endswith(".md"):
             continue
-        msg = update_toc(path)
+        msg = _update_toc(path)
         if msg:
             print("Error in `%s`: %s" % (path, msg))
             exit_code = 1

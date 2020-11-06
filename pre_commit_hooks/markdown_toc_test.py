@@ -106,12 +106,18 @@ class TestMarkdownToc(unittest.TestCase):
             "\n\n## Table of contents\n\n"
             "-   [Advanced Find & Replace](#advanced-find--replace)\n"
             "-   [Package as `package`](#package-as-package)\n"
+            "-   [Something _italicized_](#something-_italicized_)\n"
+            "-   [Something **bolded**](#something-bolded)\n"
+            "-   [Some _nested **chars `here`** now_](#some-_nested-chars-here-now_)\n"
             "\n"
         )
         body = (
             "<!-- tocstop -->\n\n"
             "## Advanced Find & Replace\n\n"
             "## Package as `package`\n\n"
+            "## Something _italicized_\n\n"
+            "## Something **bolded**\n\n"
+            "## Some _nested **chars `here`** now_\n\n"
         )
         before = header + body
         after = header + toc + body
