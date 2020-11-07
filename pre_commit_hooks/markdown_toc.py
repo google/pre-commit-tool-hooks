@@ -24,7 +24,7 @@ import os
 import re
 import sys
 
-import mistune
+import commonmark
 
 
 def _parse_args(argv=None):
@@ -39,18 +39,18 @@ def _parse_args(argv=None):
     return parser.parse_args(args=argv)
 
 
-def _make_label(tokens):
-    """Makes a label from a set of tokens. Handles joining common children."""
+def _make_label(node):
+    """Makes a label from a node. Handles joining common children."""
     label = []
-    for token in tokens:
-        if token["type"] == "text":
-            label.append(token["text"])
-        elif token["type"] == "codespan":
-            label.extend(("`", token["text"], "`"))
-        elif token["type"] == "emphasis":
-            label.extend(("_", _make_label(token["children"]), "_"))
-        elif token["type"] == "strong":
-            label.extend(("**", _make_label(token["children"]), "**"))
+    for child, entering in node.walker():
+        if child.t == "code":
+            label.extend(("`", child.literal, "`"))
+        elif child.t == "strong":
+            label.append("**")
+        elif child.t == "emph":
+            label.append("_")
+        elif child.t == "text":
+            label.append(child.literal)
     return "".join(label)
 
 
@@ -82,34 +82,39 @@ def _update_toc(path):
 
     toc = ["<!-- toc -->\n\n## Table of contents\n"]
     used_anchors = {}
-    prev_depth = 1
+    prev_level = 1
     prev_header = "(first header)"
     in_code_block = False
-    md = mistune.Markdown(mistune.AstRenderer())
-    for token in md.parse(contents):
-        if token["type"] != "heading":
+    md_parser = commonmark.Parser()
+    root = md_parser.parse(contents)
+    for child, entering in root.walker():
+        if not entering or child.t != "heading":
             continue
-        depth = token["level"]
-        label = _make_label(token["children"])
 
+        label = _make_label(child)
+        print(label, entering)
         if label.lower() == "table of contents":
             continue
 
-        if depth - 1 > prev_depth:
+        if child.level - 1 > prev_level:
             return (
-                "Header %q has depth %d, which is too deep versus previous "
-                "header %q with depth %d." % (label, depth, prev_header, depth)
+                "Header %q has level %d, which is too deep versus previous "
+                "header %q with level %d." % (label, level, prev_header, level)
             )
-        prev_depth = depth
+        prev_level = child.level
         prev_header = label
 
-        if depth == 1:
+        if child.level == 1:
             # This is the doc title; exclude it.
             continue
 
         toc.append(
             "%s-   [%s](#%s)"
-            % ("    " * (depth - 2), label, _make_anchor(label, used_anchors))
+            % (
+                "    " * (child.level - 2),
+                label,
+                _make_anchor(label, used_anchors),
+            )
         )
 
     # Add a blank line after entries, if any.
