@@ -18,6 +18,18 @@ limitations under the License.
 
 This repository contains hooks for use with [pre-commit](pre-commit.com).
 
+<!-- toc -->
+
+## Table of contents
+
+-   [Using pre-commit-tool-hooks with pre-commit](#using-pre-commit-tool-hooks-with-pre-commit)
+-   [Hooks](#hooks)
+    -   [check-copyright](#check-copyright)
+        -   [Customizing copyright formats](#customizing-copyright-formats)
+    -   [markdown-toc](#markdown-toc)
+
+<!-- tocstop -->
+
 ## Using pre-commit-tool-hooks with pre-commit
 
 Add this to your `.pre-commit-config.yaml`:
@@ -37,6 +49,8 @@ Add this to your `.pre-commit-config.yaml`:
 Verifies that files contain a copyright statement. Looks for a Google Apache 2.0
 license by default. To customize, pass `--copyright=<text>`, using `YYYY` for
 year substitution.
+
+In `.pre-commit-config.yaml`, put:
 
 ```yaml
 - id: check-copyright
@@ -100,4 +114,58 @@ Do:
       - ''
       - '// '
       - ''
+```
+
+### markdown-toc
+
+Generates a [Prettier](https://pretter.io)-compatible table of contents for
+Markdown files.
+
+In a markdown file, put the `<!-- toc -->` and `<!-- tocstop -->` markers to
+indicate where to put the table of contents:
+
+```md
+# Document title
+
+<!-- toc -->
+<!-- tocstop -->
+
+## Header
+
+### Sub-header
+```
+
+This will generate a table of contents based on non-title headers:
+
+```md
+# Document title
+
+<!-- toc -->
+
+## Table of contents
+
+-   [Header](#header)
+    -   [Sub-header](#sub-header)
+
+<!-- toc -->
+
+## Header
+
+### Sub-header
+```
+
+In `.pre-commit-config.yaml`, put:
+
+```yaml
+- id: markdown-toc
+```
+
+This generates bullets with a four space indent. When used with Prettier, it's
+recommended to specify the `tabWidth` in `.prettierrc.yaml` to match:
+
+```yaml
+overrides:
+    - files: '*.md'
+      options:
+          tabWidth: 4
 ```

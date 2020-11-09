@@ -17,3 +17,8 @@
   entry: check-copyright
   language: python
   language_version: python3
+- id: markdown-toc
+  name: Update markdown tables of contents
+  entry: markdown-toc
+  language: python
+  language_version: python3
