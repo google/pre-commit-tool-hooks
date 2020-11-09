@@ -57,7 +57,9 @@ def _make_label(node):
 def _make_anchor(label, used_anchors):
     """Chooses the appropriate anchor name for a header label."""
     anchor = label.lower().strip()
-    # Imitate GFM anchors. Sadly, the exact format isn't clearly documented anywhere, so this based on experimentation and what others have done to successfully replicate the GitHub anchor mapping.
+    # Imitate GFM anchors. Sadly, the exact format isn't clearly documented
+    # anywhere, so this based on experimentation and what others have done to
+    # successfully replicate the GitHub anchor mapping.
     anchor = anchor.replace(" ", "-")
     anchor = re.sub("[!\"#$%&'()*+,./:;<=>?@[\\\\\\]^`{|}~]", "", anchor)
 
