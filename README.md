@@ -116,9 +116,26 @@ Do:
       - ''
 ```
 
+### check-google-doc-style
+
+Checks documentation against the
+[Google developer documentation style guide](http://developers.google.com/style),
+with a principle of automatically generating fixes over erroring for manual
+edits. Note, while no manual fixes are requested today, some may be added in the
+future.
+
+This does not handle reformatting of edits. Please use a tool like
+[Prettier](https://prettier.io) to fix formatting.
+
+In `.pre-commit-config.yaml`, put:
+
+```yaml
+- id: check-google-doc-style
+```
+
 ### markdown-toc
 
-Generates a [Prettier](https://pretter.io)-compatible table of contents for
+Generates a [Prettier](https://prettier.io)-compatible table of contents for
 Markdown files.
 
 In a markdown file, put the `<!-- toc -->` and `<!-- tocstop -->` markers to
