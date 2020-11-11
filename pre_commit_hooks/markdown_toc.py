@@ -19,8 +19,6 @@ limitations under the License.
 """
 
 import argparse
-import datetime
-import os
 import re
 import sys
 
@@ -86,7 +84,6 @@ def _update_toc(path):
     used_anchors = {}
     prev_level = 1
     prev_header = "(first header)"
-    in_code_block = False
     md_parser = commonmark.Parser()
     root = md_parser.parse(contents)
     for child, entering in root.walker():
@@ -100,8 +97,9 @@ def _update_toc(path):
 
         if child.level - 1 > prev_level:
             return (
-                "Header %q has level %d, which is too deep versus previous "
-                "header %q with level %d." % (label, level, prev_header, level)
+                "Header %r has level %d, which is too deep versus previous "
+                "header %r with level %d."
+                % (label, child.level, prev_header, prev_level)
             )
         prev_level = child.level
         prev_header = label
@@ -148,7 +146,7 @@ def main(argv=None):
             continue
         msg = _update_toc(path)
         if msg:
-            print("Error in `%s`: %s" % (path, msg))
+            print("Error in %r: %s" % (path, msg))
             exit_code = 1
     return exit_code
 
