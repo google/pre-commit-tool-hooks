@@ -26,6 +26,7 @@ This repository contains hooks for use with [pre-commit](pre-commit.com).
 -   [Hooks](#hooks)
     -   [check-copyright](#check-copyright)
         -   [Customizing copyright formats](#customizing-copyright-formats)
+    -   [check-google-doc-style](#check-google-doc-style)
     -   [markdown-toc](#markdown-toc)
 
 <!-- tocstop -->
@@ -34,6 +35,9 @@ This repository contains hooks for use with [pre-commit](pre-commit.com).
 
 Add this to your `.pre-commit-config.yaml`:
 
+<!-- google-doc-style-ignore -->
+<!-- Ignoring due to 'repo' in yaml -->
+
 ```yaml
 - repo: https://github.com/google/pre-commit-tool-hooks
   rev: v1.0.5 # Use the rev you want to point at.
@@ -41,6 +45,8 @@ Add this to your `.pre-commit-config.yaml`:
       - id: check-copyright
       # - id: ...
 ```
+
+<!-- google-doc-style-resume -->
 
 ## Hooks
 
@@ -131,6 +137,20 @@ In `.pre-commit-config.yaml`, put:
 
 ```yaml
 - id: check-google-doc-style
+```
+
+To disable this on sections of a markdown file, use the ignore/resume comments:
+
+```md
+Checked
+
+<!-- google-doc-style-ignore -->
+
+Ignored
+
+<!-- google-doc-style-resume -->
+
+Checked
 ```
 
 ### markdown-toc
