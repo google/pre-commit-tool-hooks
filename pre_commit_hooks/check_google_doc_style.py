@@ -26,7 +26,7 @@ _IGNORE_START = "<!-- google-doc-style-ignore -->"
 _IGNORE_STOP = "<!-- google-doc-style-resume -->"
 
 # These are from https://developers.google.com/style/word-list.
-_REPLACERS = {
+_REPLACERS = (
     ("blacklist", "blocklist"),
     ("cons", "disadvantages"),
     ("e.g.", "for example"),
@@ -44,7 +44,7 @@ _REPLACERS = {
     ("vice versa", "the other way around"),
     ("vs.", "versus"),
     ("whitelist", "allowlist"),
-}
+)
 
 
 def _parse_args(argv=None):
