@@ -61,9 +61,14 @@ class TestCheckGoogleDocStyle(unittest.TestCase):
         after = "Something\n\nDisadvantages:\n\n- Example"
         self._assert_contents(before, after)
 
+    def test_basic_uppercase(self):
+        before = "Something\n\nCONS:\n\n- Example"
+        after = "Something\n\nDisadvantages:\n\n- Example"
+        self._assert_contents(before, after)
+
     def test_repeated(self):
-        before = "cons cons cons"
-        after = "disadvantages disadvantages disadvantages"
+        before = "cons cons Cons CONS"
+        after = "disadvantages disadvantages Disadvantages Disadvantages"
         self._assert_contents(before, after)
 
     def test_abbreviation(self):

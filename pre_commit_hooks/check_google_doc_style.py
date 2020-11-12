@@ -61,16 +61,19 @@ def _parse_args(argv=None):
 
 def build_replacers():
     """Builds replacement regex objects."""
-    for capitalize in (True, False):
+    # Do uncapitalized first, because capitalized uses case-insensitive.
+    for capitalize in (False, True):
         for before, after in _REPLACERS:
             if capitalize:
-                before = before.capitalize()
+                flags = "(?i)"
                 after = after.capitalize()
+            else:
+                flags = ""
             # This needs to handle abbreviations, such as `i.e.`, and so checks
             # for the full search word. It may be useful to optimize if this
             # becomes a performance issue.  Use negative lookbehind and
             # lookahead to ensure we have word breaks.
-            yield (r"(?<!\w)%s(?!\w)" % re.escape(before), after)
+            yield (r"%s(?<!\w)%s(?!\w)" % (flags, re.escape(before)), after)
 
 
 def _check_style(replacers, path):
