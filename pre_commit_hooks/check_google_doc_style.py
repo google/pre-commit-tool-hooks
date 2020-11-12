@@ -87,7 +87,7 @@ def _check_style(replacers, path):
         line = lines[index]
         if line == _IGNORE_START:
             if ignoring:
-                return "Found adjacent %s without %s on line %d" % (
+                return "Found adjacent %r without a %r on line %d" % (
                     _IGNORE_START,
                     _IGNORE_STOP,
                     index + 1,
@@ -95,7 +95,7 @@ def _check_style(replacers, path):
             ignoring = True
         elif line == _IGNORE_STOP:
             if not ignoring:
-                return "Found %s without a preceding %s on line %d" % (
+                return "Found %r without a preceding %r on line %d" % (
                     _IGNORE_STOP,
                     _IGNORE_START,
                     index + 1,
@@ -107,7 +107,7 @@ def _check_style(replacers, path):
                 new_line = re.sub(before, after, new_line)
             lines[index] = new_line
     if ignoring:
-        return "Found %s without a stopping %s" % (_IGNORE_START, _IGNORE_STOP)
+        return "Found %r without a stopping %r" % (_IGNORE_START, _IGNORE_STOP)
 
     new_contents = "\n".join(lines)
     if new_contents != contents:
@@ -130,7 +130,7 @@ def main(argv=None):
             continue
         errors = _check_style(replacers, path)
         if errors:
-            print("Errors in `%s`: %s" % (path, errors))
+            print("Errors in %r: %s" % (path, errors))
             exit_code = 1
     return exit_code
 
