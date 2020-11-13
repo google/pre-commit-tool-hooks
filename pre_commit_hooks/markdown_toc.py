@@ -91,7 +91,6 @@ def _update_toc(path):
             continue
 
         label = _make_label(child)
-        print(label, entering)
         if label.lower() == "table of contents":
             continue
 
