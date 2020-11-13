@@ -17,6 +17,11 @@
   entry: check-copyright
   language: python
   language_version: python3
+- id: check-google-doc-style
+  name: Check Google Developer Documentation style
+  entry: check-google-doc-style
+  language: python
+  language_version: python3
 - id: markdown-toc
   name: Update markdown tables of contents
   entry: markdown-toc

@@ -26,6 +26,7 @@ This repository contains hooks for use with [pre-commit](pre-commit.com).
 -   [Hooks](#hooks)
     -   [check-copyright](#check-copyright)
         -   [Customizing copyright formats](#customizing-copyright-formats)
+    -   [check-google-doc-style](#check-google-doc-style)
     -   [markdown-toc](#markdown-toc)
 
 <!-- tocstop -->
@@ -34,6 +35,9 @@ This repository contains hooks for use with [pre-commit](pre-commit.com).
 
 Add this to your `.pre-commit-config.yaml`:
 
+<!-- google-doc-style-ignore -->
+<!-- Ignoring due to 'repo' in yaml -->
+
 ```yaml
 - repo: https://github.com/google/pre-commit-tool-hooks
   rev: v1.0.5 # Use the rev you want to point at.
@@ -41,6 +45,8 @@ Add this to your `.pre-commit-config.yaml`:
       - id: check-copyright
       # - id: ...
 ```
+
+<!-- google-doc-style-resume -->
 
 ## Hooks
 
@@ -116,9 +122,40 @@ Do:
       - ''
 ```
 
+### check-google-doc-style
+
+Checks documentation against the
+[Google developer documentation style guide](http://developers.google.com/style),
+with a principle of automatically generating fixes over erroring for manual
+edits. Note, while no manual fixes are requested today, some may be added in the
+future.
+
+This does not handle reformatting of edits. Please use a tool like
+[Prettier](https://prettier.io) to fix formatting.
+
+In `.pre-commit-config.yaml`, put:
+
+```yaml
+- id: check-google-doc-style
+```
+
+To disable this on sections of a markdown file, use the ignore/resume comments:
+
+```md
+Checked
+
+<!-- google-doc-style-ignore -->
+
+Ignored
+
+<!-- google-doc-style-resume -->
+
+Checked
+```
+
 ### markdown-toc
 
-Generates a [Prettier](https://pretter.io)-compatible table of contents for
+Generates a [Prettier](https://prettier.io)-compatible table of contents for
 Markdown files.
 
 In a markdown file, put the `<!-- toc -->` and `<!-- tocstop -->` markers to
