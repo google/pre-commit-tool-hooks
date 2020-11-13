@@ -17,7 +17,6 @@ limitations under the License.
 """
 
 import os
-import re
 import tempfile
 import unittest
 
@@ -28,7 +27,7 @@ class TestMarkdownToc(unittest.TestCase):
     def setUp(self):
         self.maxDiff = 1000
 
-    def _assert_contents(self, orig, expected, ext=".md"):
+    def _assert_contents(self, orig, expected, ext=".md", exit_code=0):
         with tempfile.NamedTemporaryFile(
             suffix=ext, mode="w", delete=False
         ) as f:
@@ -36,7 +35,7 @@ class TestMarkdownToc(unittest.TestCase):
             f.write(orig)
             f.flush()
 
-        self.assertEqual(markdown_toc.main(argv=["bin", filename]), 0)
+        self.assertEqual(markdown_toc.main(argv=["bin", filename]), exit_code)
         with open(filename) as f:
             self.assertEqual(f.read(), expected)
 
@@ -45,6 +44,10 @@ class TestMarkdownToc(unittest.TestCase):
     def test_wrong_ext(self):
         contents = "<!-- toc --><!-- tocstop -->\n"
         self._assert_contents(contents, contents, ext=".py")
+
+    def test_bad_header_level(self):
+        contents = "<!-- toc --><!-- tocstop -->\n### Test"
+        self._assert_contents(contents, contents, exit_code=1)
 
     def test_empty_file(self):
         self._assert_contents("", "")
@@ -108,7 +111,8 @@ class TestMarkdownToc(unittest.TestCase):
             "-   [Package as `package`](#package-as-package)\n"
             "-   [Something _italicized_](#something-_italicized_)\n"
             "-   [Something **bolded**](#something-bolded)\n"
-            "-   [Some _nested **chars `here`** now_](#some-_nested-chars-here-now_)\n"
+            "-   [Some _nested **chars `here`** now_]"
+            "(#some-_nested-chars-here-now_)\n"
             "\n"
         )
         body = (
