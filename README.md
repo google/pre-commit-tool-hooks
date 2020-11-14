@@ -40,7 +40,7 @@ Add this to your `.pre-commit-config.yaml`:
 
 ```yaml
 - repo: https://github.com/google/pre-commit-tool-hooks
-  rev: v1.1.0 # Use the rev you want to point at.
+  rev: v1.1.1 # Use the rev you want to point at.
   hooks:
       - id: check-copyright
       # - id: ...

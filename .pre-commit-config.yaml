@@ -38,7 +38,7 @@ repos:
     hooks:
       - id: codespell
   - repo: https://github.com/google/pre-commit-tool-hooks
-    rev: v1.1.0
+    rev: v1.1.1
     hooks:
       - id: check-copyright
       - id: check-google-doc-style
