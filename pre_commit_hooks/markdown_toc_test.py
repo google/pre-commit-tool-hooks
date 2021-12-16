@@ -24,10 +24,12 @@ from pre_commit_hooks import markdown_toc
 
 
 class TestMarkdownToc(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.maxDiff = 1000
 
-    def _assert_contents(self, orig, expected, ext=".md", exit_code=0):
+    def _assert_contents(
+        self, orig: str, expected: str, ext: str = ".md", exit_code: int = 0
+    ) -> None:
         with tempfile.NamedTemporaryFile(
             suffix=ext, mode="w", delete=False
         ) as f:
@@ -36,29 +38,29 @@ class TestMarkdownToc(unittest.TestCase):
             f.flush()
 
         self.assertEqual(markdown_toc.main(argv=["bin", filename]), exit_code)
-        with open(filename) as f:
-            self.assertEqual(f.read(), expected)
+        with open(filename) as updated_file:
+            self.assertEqual(updated_file.read(), expected)
 
         os.unlink(filename)
 
-    def test_wrong_ext(self):
+    def test_wrong_ext(self) -> None:
         contents = "<!-- toc --><!-- tocstop -->\n"
         self._assert_contents(contents, contents, ext=".py")
 
-    def test_bad_header_level(self):
+    def test_bad_header_level(self) -> None:
         contents = "<!-- toc --><!-- tocstop -->\n### Test"
         self._assert_contents(contents, contents, exit_code=1)
 
-    def test_empty_file(self):
+    def test_empty_file(self) -> None:
         self._assert_contents("", "")
 
-    def test_empty_toc(self):
+    def test_empty_toc(self) -> None:
         before = "<!-- toc --><!-- tocstop -->\n"
         after = "<!-- toc -->\n\n## Table of contents\n\n<!-- tocstop -->\n"
         self._assert_contents(before, after)
         self._assert_contents(after, after)
 
-    def test_basic_toc(self):
+    def test_basic_toc(self) -> None:
         header = "# Header\n\n<!-- toc -->"
         toc = (
             "\n\n## Table of contents\n\n"
@@ -81,7 +83,7 @@ class TestMarkdownToc(unittest.TestCase):
         self._assert_contents(before, after)
         self._assert_contents(after, after)
 
-    def test_codeblock_toc(self):
+    def test_codeblock_toc(self) -> None:
         header = "# Header\n\n<!-- toc -->"
         toc = (
             "\n\n## Table of contents\n\n"
@@ -103,7 +105,7 @@ class TestMarkdownToc(unittest.TestCase):
         self._assert_contents(before, after)
         self._assert_contents(after, after)
 
-    def test_weird_toc(self):
+    def test_weird_toc(self) -> None:
         header = "# Header\n\n<!-- toc -->"
         toc = (
             "\n\n## Table of contents\n\n"
@@ -128,7 +130,7 @@ class TestMarkdownToc(unittest.TestCase):
         self._assert_contents(before, after)
         self._assert_contents(after, after)
 
-    def test_repeating_toc(self):
+    def test_repeating_toc(self) -> None:
         header = "# Header\n\n<!-- toc -->"
         toc = (
             "\n\n## Table of contents\n\n"

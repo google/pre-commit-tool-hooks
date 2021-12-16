@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Update versions with:
+#   pre-commit autoupdate --freeze && pre-commit run -a
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 
@@ -20,7 +22,7 @@ default_language_version:
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.3.0
+    rev: 38b88246ccc552bffaaf54259d064beeee434539 # frozen: v4.0.1
     hooks:
       - id: check-added-large-files
       - id: check-case-conflict
@@ -34,26 +36,31 @@ repos:
         args: ['--fix=lf']
       - id: trailing-whitespace
   - repo: https://github.com/codespell-project/codespell
-    rev: v1.17.1
+    rev: 01da43d753cdff4ea7dff952b4f5317450af31e3 # frozen: v2.1.0
     hooks:
       - id: codespell
   - repo: https://github.com/google/pre-commit-tool-hooks
-    rev: v1.1.1
+    rev: 1d04a2848ac54d64bd6474ccec69aac45fa88414 # frozen: v1.1.1
     hooks:
       - id: check-copyright
       - id: check-google-doc-style
       - id: markdown-toc
   # Formatters should be run late so that they can re-format any prior changes.
   - repo: https://github.com/psf/black
-    rev: 20.8b1
+    rev: f1d4e742c91dd5179d742b0db9293c4472b765f8 # frozen: 21.12b0
     hooks:
       - id: black
   - repo: https://github.com/prettier/pre-commit
-    rev: v2.1.2
+    rev: 57f39166b5a5a504d6808b87ab98d41ebf095b46
     hooks:
       - id: prettier
   # Run linters last, as formatters and other checks may fix issues.
   - repo: https://gitlab.com/PyCQA/flake8
-    rev: 3.8.4
+    rev: dcd740bc0ebaf2b3d43e59a0060d157c97de13f3 # frozen: 3.9.2
     hooks:
       - id: flake8
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: 5ecfb11dc5d24c184a754017ca3a38cb23278d26 # frozen: v0.920
+    hooks:
+      - id: mypy
+        additional_dependencies: [types-all]

@@ -21,6 +21,7 @@ limitations under the License.
 import argparse
 import re
 import sys
+from typing import Generator, List, Optional, Tuple
 
 _IGNORE_START = "<!-- google-doc-style-ignore -->"
 _IGNORE_STOP = "<!-- google-doc-style-resume -->"
@@ -47,7 +48,7 @@ _REPLACERS = (
 )
 
 
-def _parse_args(argv=None):
+def _parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     """Parses command-line arguments and flags."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -59,7 +60,7 @@ def _parse_args(argv=None):
     return parser.parse_args(args=argv)
 
 
-def build_replacers():
+def build_replacers() -> Generator[Tuple[str, str], None, None]:
     """Builds replacement regex objects."""
     # Do uncapitalized first, because capitalized uses case-insensitive.
     for capitalize in (False, True):
@@ -76,7 +77,7 @@ def build_replacers():
             yield (r"%s(?<!\w)%s(?!\w)" % (flags, re.escape(before)), after)
 
 
-def _check_style(replacers, path):
+def _check_style(replacers: List[Tuple[str, str]], path: str) -> Optional[str]:
     """Checks documentation style for the given path.
 
     Returns errors, if any.
@@ -119,9 +120,10 @@ def _check_style(replacers, path):
     if new_contents != contents:
         with open(path, "w") as f:
             f.write(new_contents)
+    return None
 
 
-def main(argv=None):
+def main(argv: Optional[List[str]] = None) -> int:
     if not argv:
         argv = sys.argv
     parsed_args = _parse_args(argv[1:])

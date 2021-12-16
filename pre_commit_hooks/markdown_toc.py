@@ -21,11 +21,12 @@ limitations under the License.
 import argparse
 import re
 import sys
+from typing import Any, Dict, List, Optional
 
 import commonmark
 
 
-def _parse_args(argv=None):
+def _parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     """Parses command-line arguments and flags."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -37,9 +38,9 @@ def _parse_args(argv=None):
     return parser.parse_args(args=argv)
 
 
-def _make_label(node):
+def _make_label(node: Any) -> str:
     """Makes a label from a node. Handles joining common children."""
-    label = []
+    label: List[str] = []
     for child, entering in node.walker():
         if child.t == "code":
             label.extend(("`", child.literal, "`"))
@@ -52,7 +53,7 @@ def _make_label(node):
     return "".join(label)
 
 
-def _make_anchor(label, used_anchors):
+def _make_anchor(label: str, used_anchors: Dict[str, int]) -> str:
     """Chooses the appropriate anchor name for a header label."""
     anchor = label.lower().strip()
     # Imitate GFM anchors. Sadly, the exact format isn't clearly documented
@@ -71,17 +72,17 @@ def _make_anchor(label, used_anchors):
     return anchor
 
 
-def _update_toc(path):
+def _update_toc(path: str) -> Optional[str]:
     """Updates the table of contents for a file."""
     with open(path) as f:
         contents = f.read()
     if "<!-- toc -->" not in contents:
-        return
+        return None
     if "<!-- tocstop -->" not in contents:
         return "Missing tocstop"
 
     toc = ["<!-- toc -->\n\n## Table of contents\n"]
-    used_anchors = {}
+    used_anchors: Dict[str, int] = {}
     prev_level = 1
     prev_header = "(first header)"
     md_parser = commonmark.Parser()
@@ -131,9 +132,10 @@ def _update_toc(path):
     if new_contents != contents:
         with open(path, "w") as f:
             f.write(new_contents)
+    return None
 
 
-def main(argv=None):
+def main(argv: Optional[List[str]] = None) -> int:
     if not argv:
         argv = sys.argv
     parsed_args = _parse_args(argv[1:])
