@@ -1,9 +1,7 @@
-#!/usr/bin/env python3
-
-"""Updates the markdown table of contents."""
+"""Validates links in markdown files."""
 
 __copyright__ = """
-Copyright 2020 Google LLC
+Copyright 2021 Google LLC
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,7 +17,6 @@ limitations under the License.
 """
 
 import argparse
-import re
 import sys
 from typing import List, Optional
 
@@ -38,45 +35,15 @@ def _parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     return parser.parse_args(args=argv)
 
 
-def _update_toc(path: str) -> Optional[str]:
+def _load_links(path: str) -> None:
     """Updates the table of contents for a file."""
     with open(path) as f:
         contents = f.read()
-    if "<!-- toc -->" not in contents:
-        return None
-    if "<!-- tocstop -->" not in contents:
-        return "Missing tocstop"
+    print(markdown_links.get_links(contents))
 
-    try:
-        headers, _ = markdown_links.get_links(contents)
-    except ValueError as e:
-        return str(e)
-    toc = ["<!-- toc -->\n\n## Table of contents\n"]
-    for (anchor, label, level) in headers:
-        if label.lower() == "table of contents":
-            continue
-        if level == 1:
-            # This is the doc title; exclude it.
-            continue
 
-        indent = " " * 4 * (level - 2)
-        toc.append(f"{indent}-   [{label}](#{anchor})")
-
-    # Add a blank line after entries, if any.
-    if len(toc) > 1:
-        toc.append("")
-    toc.append("<!-- tocstop -->")
-
-    new_contents = re.sub(
-        "<!-- toc -->.*?<!-- tocstop -->",
-        "\n".join(toc),
-        contents,
-        count=1,
-        flags=re.DOTALL,
-    )
-    if new_contents != contents:
-        with open(path, "w") as f:
-            f.write(new_contents)
+def _check_links(path: str) -> Optional[str]:
+    _load_links(path)
     return None
 
 
@@ -90,9 +57,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     for path in paths:
         if not path.endswith(".md"):
             continue
-        msg = _update_toc(path)
-        if msg:
-            print(f"Error in {path}: {msg}")
+        if not _check_links(path):
             exit_code = 1
     return exit_code
 
