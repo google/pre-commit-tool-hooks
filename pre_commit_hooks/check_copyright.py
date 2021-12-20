@@ -24,6 +24,7 @@ import os
 import re
 import sys
 import textwrap
+from typing import List, Optional, Tuple
 
 _DEFAULT_COPYRIGHT = """Copyright YYYY Google LLC
 
@@ -51,12 +52,12 @@ _BUILTIN_FORMATS = (
 )
 
 
-def _exit(error):
+def _exit(error: str) -> None:
     """A simple exit wrapper for testing."""
     sys.exit(error)
 
 
-def _parse_args(argv=None):
+def _parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     """Parses command-line arguments and flags."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -94,7 +95,12 @@ def _parse_args(argv=None):
 
 
 class _CopyrightValidator(object):
-    def __init__(self, copyright, skip_pattern, custom_formats):
+    def __init__(
+        self,
+        copyright: str,
+        skip_pattern: str,
+        custom_formats: Optional[List[str]],
+    ) -> None:
         """Initializes the list of copyright formats and skipped paths."""
         copyright = copyright.strip("\n")
         try:
@@ -102,7 +108,7 @@ class _CopyrightValidator(object):
         except re.error as e:
             _exit("Invalid --skip_pattern `%s`: %s`" % (skip_pattern, e))
 
-        self._formats = []
+        self._formats: List[Tuple[re.Pattern, re.Pattern, str]] = []
         if custom_formats:
             for custom_format in custom_formats:
                 self._add_format(copyright, *custom_format)
@@ -110,8 +116,13 @@ class _CopyrightValidator(object):
             self._add_format(copyright, *builtin_format)
 
     def _add_format(
-        self, copyright, path_pattern, prefix, per_line_prefix, suffix
-    ):
+        self,
+        copyright: str,
+        path_pattern: str,
+        prefix: str,
+        per_line_prefix: str,
+        suffix: str,
+    ) -> None:
         """Adds a format, either from --custom_format or built-in.
 
         This will reformat the standard copyright based on the prefix,
@@ -142,7 +153,7 @@ class _CopyrightValidator(object):
 
         self._formats.append((path_re, copyright_re, suggest))
 
-    def _get_copyright(self, path):
+    def _get_copyright(self, path: str) -> Optional[Tuple[re.Pattern, str]]:
         """Returns the copyright for the given path, or None to skip."""
         if self._skip.search(path):
             return None
@@ -156,7 +167,7 @@ class _CopyrightValidator(object):
             "Should have had at least a default match: `%s`" % path
         )
 
-    def validate(self, path):
+    def validate(self, path: str) -> bool:
         """Checks the file for a copyright, returning False on error."""
         if os.path.isdir(path):
             return True
@@ -186,7 +197,7 @@ class _CopyrightValidator(object):
         return False
 
 
-def main(argv=None):
+def main(argv: Optional[List[str]] = None) -> int:
     if not argv:
         argv = sys.argv
     parsed_args = _parse_args(argv[1:])

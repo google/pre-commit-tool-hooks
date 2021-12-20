@@ -27,26 +27,30 @@ class FakeExitError(Exception):
     pass
 
 
-def _fake_exit(message):
+def _fake_exit(message: FakeExitError) -> None:
     raise FakeExitError(message)
 
 
 class TestCheckCopyright(unittest.TestCase):
-    def test_get_copyright(self):
+    def test_get_copyright(self) -> None:
         validator = check_copyright._CopyrightValidator(
             "test", check_copyright._DEFAULT_SKIP_PATTERN, None
         )
+        copyright = validator._get_copyright("test.py")
+        assert copyright is not None
         self.assertEqual(
-            validator._get_copyright("test.py")[1],
+            copyright[1],
             '__copyright__ = """\ntest\n"""\n',
         )
         self.assertEqual(validator._get_copyright("LICENSE"), None)
+        copyright = validator._get_copyright("foo.bar")
+        assert copyright is not None
         self.assertEqual(
-            validator._get_copyright("foo.bar")[1],
+            copyright[1],
             "# test\n",
         )
 
-    def test_builtin(self):
+    def test_builtin(self) -> None:
         with tempfile.NamedTemporaryFile(
             suffix=".py", mode="w", delete=False
         ) as f:
@@ -58,7 +62,7 @@ class TestCheckCopyright(unittest.TestCase):
             f.flush()
             self.assertEqual(check_copyright.main(argv=argv), 0)
 
-    def test_yyyy(self):
+    def test_yyyy(self) -> None:
         with tempfile.NamedTemporaryFile(
             suffix=".py", mode="w", delete=False
         ) as f:
@@ -70,14 +74,14 @@ class TestCheckCopyright(unittest.TestCase):
             f.flush()
             self.assertEqual(check_copyright.main(argv=argv), 0)
 
-    def test_empty_file(self):
+    def test_empty_file(self) -> None:
         with tempfile.NamedTemporaryFile(
             suffix=".py", mode="w", delete=False
         ) as f:
             argv = ["bin", f.name, "--copyright=test"]
             self.assertEqual(check_copyright.main(argv=argv), 0)
 
-    def test_skip_pattern_invalid(self):
+    def test_skip_pattern_invalid(self) -> None:
         with mock.patch(
             "pre_commit_hooks.check_copyright._exit", side_effect=_fake_exit
         ):
@@ -90,7 +94,7 @@ class TestCheckCopyright(unittest.TestCase):
                 FakeExitError, "--skip_pattern", check_copyright.main, argv=argv
             )
 
-    def test_skip_pattern(self):
+    def test_skip_pattern(self) -> None:
         with tempfile.NamedTemporaryFile(
             suffix=".py", mode="w", delete=False
         ) as f:
@@ -101,7 +105,7 @@ class TestCheckCopyright(unittest.TestCase):
             argv.append("--skip_pattern=\\.py$")
             self.assertEqual(check_copyright.main(argv=argv), 0)
 
-    def test_custom_format_invalid(self):
+    def test_custom_format_invalid(self) -> None:
         with mock.patch(
             "pre_commit_hooks.check_copyright._exit", side_effect=_fake_exit
         ):
@@ -121,7 +125,7 @@ class TestCheckCopyright(unittest.TestCase):
                 argv=argv,
             )
 
-    def test_custom_format_all(self):
+    def test_custom_format_all(self) -> None:
         with tempfile.NamedTemporaryFile(
             suffix=".py", mode="w", delete=False
         ) as f:
@@ -142,7 +146,7 @@ class TestCheckCopyright(unittest.TestCase):
             f.flush()
             self.assertEqual(check_copyright.main(argv=argv), 0)
 
-    def test_custom_format_per_line_only(self):
+    def test_custom_format_per_line_only(self) -> None:
         with tempfile.NamedTemporaryFile(
             suffix=".py", mode="w", delete=False
         ) as f:
