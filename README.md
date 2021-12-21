@@ -27,6 +27,7 @@ This repository contains hooks for use with [pre-commit](pre-commit.com).
     -   [check-copyright](#check-copyright)
         -   [Customizing copyright formats](#customizing-copyright-formats)
     -   [check-google-doc-style](#check-google-doc-style)
+    -   [check-links](#check-links)
     -   [markdown-toc](#markdown-toc)
 
 <!-- tocstop -->
@@ -40,7 +41,7 @@ Add this to your `.pre-commit-config.yaml`:
 
 ```yaml
 - repo: https://github.com/google/pre-commit-tool-hooks
-  rev: v1.1.1 # Use the rev you want to point at.
+  rev: vTODO # Use the rev you want to point at.
   hooks:
       - id: check-copyright
       # - id: ...
@@ -151,6 +152,17 @@ Ignored
 <!-- google-doc-style-resume -->
 
 Checked
+```
+
+### check-links
+
+Checks links for correctness. For example, ensures that markdown links point at
+valid anchors within the doc.
+
+In `.pre-commit-config.yaml`, put:
+
+```yaml
+- id: check-links
 ```
 
 ### markdown-toc
