@@ -153,6 +153,17 @@ Ignored
 Checked
 ```
 
+### check-links
+
+Checks links for correctness. For example, ensures that markdown links point at
+valid anchors within the doc.
+
+In `.pre-commit-config.yaml`, put:
+
+```yaml
+- id: check-links
+```
+
 ### markdown-toc
 
 Generates a [Prettier](https://prettier.io)-compatible table of contents for
