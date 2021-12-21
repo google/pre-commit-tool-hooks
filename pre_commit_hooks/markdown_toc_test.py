@@ -16,39 +16,32 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import unittest
-
 from pre_commit_hooks import markdown_toc
-from pre_commit_hooks import test_utils
+from pre_commit_hooks import file_test_case
 
 
-class TestMarkdownToc(unittest.TestCase):
+class TestMarkdownToc(file_test_case.FileTestCase):
     def setUp(self) -> None:
-        self.maxDiff = 1000
-        self._test_call = lambda filename: markdown_toc.main(
-            argv=["bin", filename]
+        self.setup_helper(
+            lambda filename: markdown_toc.main(argv=["bin", filename])
         )
 
     def test_wrong_ext(self) -> None:
         contents = "<!-- toc --><!-- tocstop -->\n"
-        test_utils.assert_exit_code(
-            self, self._test_call, contents, contents, ext=".py"
-        )
+        self.assert_exit_code(contents, contents, ext=".py")
 
     def test_bad_header_level(self) -> None:
         contents = "<!-- toc --><!-- tocstop -->\n### Test"
-        test_utils.assert_exit_code(
-            self, self._test_call, contents, contents, exit_code=1
-        )
+        self.assert_exit_code(contents, contents, exit_code=1)
 
     def test_empty_file(self) -> None:
-        test_utils.assert_exit_code(self, self._test_call, "", "")
+        self.assert_exit_code("", "")
 
     def test_empty_toc(self) -> None:
         before = "<!-- toc --><!-- tocstop -->\n"
         after = "<!-- toc -->\n\n## Table of contents\n\n<!-- tocstop -->\n"
-        test_utils.assert_exit_code(self, self._test_call, before, after)
-        test_utils.assert_exit_code(self, self._test_call, after, after)
+        self.assert_exit_code(before, after)
+        self.assert_exit_code(after, after)
 
     def test_basic_toc(self) -> None:
         header = "# Header\n\n<!-- toc -->"
@@ -70,8 +63,8 @@ class TestMarkdownToc(unittest.TestCase):
         )
         before = header + body
         after = header + toc + body
-        test_utils.assert_exit_code(self, self._test_call, before, after)
-        test_utils.assert_exit_code(self, self._test_call, after, after)
+        self.assert_exit_code(before, after)
+        self.assert_exit_code(after, after)
 
     def test_codeblock_toc(self) -> None:
         header = "# Header\n\n<!-- toc -->"
@@ -92,8 +85,8 @@ class TestMarkdownToc(unittest.TestCase):
         )
         before = header + body
         after = header + toc + body
-        test_utils.assert_exit_code(self, self._test_call, before, after)
-        test_utils.assert_exit_code(self, self._test_call, after, after)
+        self.assert_exit_code(before, after)
+        self.assert_exit_code(after, after)
 
     def test_weird_toc(self) -> None:
         header = "# Header\n\n<!-- toc -->"
@@ -117,8 +110,8 @@ class TestMarkdownToc(unittest.TestCase):
         )
         before = header + body
         after = header + toc + body
-        test_utils.assert_exit_code(self, self._test_call, before, after)
-        test_utils.assert_exit_code(self, self._test_call, after, after)
+        self.assert_exit_code(before, after)
+        self.assert_exit_code(after, after)
 
     def test_repeating_toc(self) -> None:
         header = "# Header\n\n<!-- toc -->"
@@ -132,5 +125,5 @@ class TestMarkdownToc(unittest.TestCase):
         body = "<!-- tocstop -->\n\n## Bork\n\n## Bork\n\n## Bork\n\n"
         before = header + body
         after = header + toc + body
-        test_utils.assert_exit_code(self, self._test_call, before, after)
-        test_utils.assert_exit_code(self, self._test_call, after, after)
+        self.assert_exit_code(before, after)
+        self.assert_exit_code(after, after)

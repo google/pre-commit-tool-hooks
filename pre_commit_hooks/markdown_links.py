@@ -17,9 +17,21 @@ limitations under the License.
 """
 
 import re
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, NamedTuple, Tuple
 
 import commonmark
+
+
+class Header(NamedTuple):
+    label: str
+    anchor: str
+    level: int
+
+
+class Link(NamedTuple):
+    label: str
+    destination: str
+    line_number: int
 
 
 def _make_label(node: Any) -> str:
@@ -56,10 +68,10 @@ def _make_anchor(label: str, used_anchors: Dict[str, int]) -> str:
     return anchor
 
 
-def get_links(contents: str) -> Tuple[List[Tuple[str, str, int]], List[str]]:
+def get_links(contents: str) -> Tuple[List[Header], List[Link]]:
     # Maps anchor tags to titles.
-    headers: List[Tuple[str, str, int]] = []
-    links: List[str] = []
+    headers: List[Header] = []
+    links: List[Link] = []
 
     # Tracks the number of times a given anchor tag is used.
     used_anchors: Dict[str, int] = {}
@@ -72,26 +84,37 @@ def get_links(contents: str) -> Tuple[List[Tuple[str, str, int]], List[str]]:
     md_parser = commonmark.Parser()
     root = md_parser.parse(contents)
 
+    # Links don't have sourcepos set, so use the closest known location.
+    last_line = -1
     for child, entering in root.walker():
-        if not entering or child.t != "heading":
+        if child.sourcepos is not None:
+            last_line = child.sourcepos[0][0]
+        # We only look at nodes when entering them.
+        if not entering:
             continue
 
-        label = _make_label(child)
+        if child.t == "heading":
+            label = _make_label(child)
 
-        if child.level - 1 > prev_level:
-            raise ValueError(
-                "Header %r has level %d, which is too deep versus previous "
-                "header %r with level %d."
-                % (label, child.level, prev_header, prev_level)
-            )
-        prev_level = child.level
-        prev_header = label
+            if child.level - 1 > prev_level:
+                raise ValueError(
+                    "Header %r has level %d, which is too deep versus previous "
+                    "header %r with level %d."
+                    % (label, child.level, prev_header, prev_level)
+                )
+            prev_level = child.level
+            prev_header = label
 
-        headers.append(
-            (
-                _make_anchor(label, used_anchors),
-                label,
-                child.level,
+            headers.append(
+                Header(
+                    label,
+                    _make_anchor(label, used_anchors),
+                    child.level,
+                )
             )
-        )
+        elif child.t == "link":
+            assert child.destination is not None
+            links.append(
+                Link(_make_label(child), str(child.destination), last_line)
+            )
     return (headers, links)

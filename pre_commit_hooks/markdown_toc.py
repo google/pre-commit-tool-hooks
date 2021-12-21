@@ -52,15 +52,15 @@ def _update_toc(path: str) -> Optional[str]:
     except ValueError as e:
         return str(e)
     toc = ["<!-- toc -->\n\n## Table of contents\n"]
-    for (anchor, label, level) in headers:
-        if label.lower() == "table of contents":
+    for header in headers:
+        if header.label.lower() == "table of contents":
             continue
-        if level == 1:
+        if header.level == 1:
             # This is the doc title; exclude it.
             continue
 
-        indent = " " * 4 * (level - 2)
-        toc.append(f"{indent}-   [{label}](#{anchor})")
+        indent = " " * 4 * (header.level - 2)
+        toc.append(f"{indent}-   [{header.label}](#{header.anchor})")
 
     # Add a blank line after entries, if any.
     if len(toc) > 1:

@@ -38,36 +38,53 @@ class TestMarkdownLinks(unittest.TestCase):
         headers, links = markdown_links.get_links(contents)
         self.assertListEqual(
             [
-                ("header", "Header", 1),
-                ("section", "Section", 2),
-                ("more", "More", 3),
-                ("even-more", "Even more", 3),
-                ("other-section", "Other section", 2),
+                markdown_links.Header("Header", "header", 1),
+                markdown_links.Header("Section", "section", 2),
+                markdown_links.Header("More", "more", 3),
+                markdown_links.Header("Even more", "even-more", 3),
+                markdown_links.Header("Other section", "other-section", 2),
             ],
             headers,
         )
+        self.assertListEqual([], links)
 
     def test_punctuation(self) -> None:
         contents = "# Header? Yes it is!\n"
         headers, links = markdown_links.get_links(contents)
         self.assertListEqual(
             [
-                ("header-yes-it-is", "Header? Yes it is!", 1),
+                markdown_links.Header(
+                    "Header? Yes it is!", "header-yes-it-is", 1
+                ),
             ],
             headers,
         )
+        self.assertListEqual([], links)
 
     def test_duplicates(self) -> None:
         contents = "# Header\n\n## Header\n\n"
         headers, links = markdown_links.get_links(contents)
         self.assertListEqual(
             [
-                ("header", "Header", 1),
-                ("header-1", "Header", 2),
+                markdown_links.Header("Header", "header", 1),
+                markdown_links.Header("Header", "header-1", 2),
             ],
             headers,
         )
+        self.assertListEqual([], links)
 
-    def test_bad(self) -> None:
+    def test_bad_header(self) -> None:
         contents = "### Blah\n\n"
         self.assertRaises(ValueError, markdown_links.get_links, contents)
+
+    def test_links(self) -> None:
+        contents = "[test](#test)\n\n[test2](/test2)"
+        headers, links = markdown_links.get_links(contents)
+        self.assertListEqual([], headers)
+        self.assertListEqual(
+            [
+                markdown_links.Link("test", "#test", 1),
+                markdown_links.Link("test2", "/test2", 3),
+            ],
+            links,
+        )

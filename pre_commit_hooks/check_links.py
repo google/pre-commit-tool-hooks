@@ -18,7 +18,7 @@ limitations under the License.
 
 import argparse
 import sys
-from typing import List, Optional
+from typing import List, Optional, Set
 
 from pre_commit_hooks import markdown_links
 
@@ -35,16 +35,26 @@ def _parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     return parser.parse_args(args=argv)
 
 
-def _load_links(path: str) -> None:
+def _check_links(path: str) -> bool:
     """Updates the table of contents for a file."""
     with open(path) as f:
         contents = f.read()
-    print(markdown_links.get_links(contents))
+    headers, links = markdown_links.get_links(contents)
 
+    anchors = set([header.anchor for header in headers])
 
-def _check_links(path: str) -> Optional[str]:
-    _load_links(path)
-    return None
+    has_errors = False
+    for link in links:
+        if link.destination.startswith("#"):
+            anchor = link.destination[1:]
+            if anchor not in anchors:
+                print(
+                    f"{path}:{link.line_number}: "
+                    f"[{link.label}]({link.destination}) "
+                    f"points at a non-existent anchor."
+                )
+                has_errors = True
+    return has_errors
 
 
 def main(argv: Optional[List[str]] = None) -> int:
@@ -57,7 +67,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     for path in paths:
         if not path.endswith(".md"):
             continue
-        if not _check_links(path):
+        if _check_links(path):
             exit_code = 1
     return exit_code
 

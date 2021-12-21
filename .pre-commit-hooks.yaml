@@ -22,6 +22,11 @@
   entry: check-google-doc-style
   language: python
   language_version: python3
+- id: check-links
+  name: Validates links in markdown files.
+  entry: check-links
+  language: python
+  language_version: python3
 - id: markdown-toc
   name: Update markdown tables of contents
   entry: markdown-toc
