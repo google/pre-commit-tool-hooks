@@ -27,6 +27,7 @@ This repository contains hooks for use with [pre-commit](pre-commit.com).
     -   [check-copyright](#check-copyright)
         -   [Customizing copyright formats](#customizing-copyright-formats)
     -   [check-google-doc-style](#check-google-doc-style)
+    -   [check-links](#check-links)
     -   [markdown-toc](#markdown-toc)
 
 <!-- tocstop -->

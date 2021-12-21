@@ -18,7 +18,7 @@ limitations under the License.
 
 import argparse
 import sys
-from typing import List, Optional, Set
+from typing import List, Optional
 
 from pre_commit_hooks import markdown_links
 
