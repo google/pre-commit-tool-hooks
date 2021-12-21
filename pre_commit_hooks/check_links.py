@@ -54,6 +54,7 @@ def _check_links(path: str) -> bool:
                     f"points at a non-existent anchor."
                 )
                 has_errors = True
+        # TODO: Handle other link forms.
     return has_errors
 
 
