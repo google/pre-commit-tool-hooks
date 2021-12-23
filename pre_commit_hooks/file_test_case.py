@@ -26,6 +26,7 @@ class FileTestCase(unittest.TestCase):
     def setup_helper(self, test_call: Callable[[str], int]) -> None:
         self.maxDiff = 1000
         self._test_call = test_call
+        self.temp_dir: Optional[tempfile.TemporaryDirectory] = None
 
     def assert_exit_code(
         self,
@@ -37,8 +38,11 @@ class FileTestCase(unittest.TestCase):
         if expected is None:
             expected = orig
 
+        dir_name = None
+        if self.temp_dir:
+            dir_name = self.temp_dir.name
         with tempfile.NamedTemporaryFile(
-            suffix=ext, mode="w", delete=False
+            suffix=ext, mode="w", delete=False, dir=dir_name
         ) as f:
             filename = f.name
             f.write(orig)
