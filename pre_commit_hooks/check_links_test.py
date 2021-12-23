@@ -18,6 +18,7 @@ limitations under the License.
 
 from pathlib import Path
 import tempfile
+from typing import List
 from unittest import mock
 
 from pre_commit_hooks import check_links
@@ -27,42 +28,56 @@ from pre_commit_hooks import file_test_case
 class TestMarkdownToc(file_test_case.FileTestCase):
     def setUp(self) -> None:
         self.setup_helper(
-            lambda filename: check_links.main(argv=["bin", filename])
+            lambda filename: check_links.main(
+                argv=["bin"] + self._flags + [filename]
+            )
         )
-        self.root_temp_dir = tempfile.TemporaryDirectory()
-        self.temp_dir = tempfile.TemporaryDirectory(dir=self.root_temp_dir.name)
-        self.error_patcher = mock.patch(
+
+        self._flags: List[str] = []
+
+        self._root_temp_dir = tempfile.TemporaryDirectory()
+        self.temp_dir = tempfile.TemporaryDirectory(
+            dir=self._root_temp_dir.name
+        )
+
+        self._error_patcher = mock.patch(
             "pre_commit_hooks.check_links._print_error"
         )
-        self.print_error = self.error_patcher.start()
-        self.subprocess_patcher = mock.patch(
+        self._print_error = self._error_patcher.start()
+        self._subprocess_patcher = mock.patch(
             "pre_commit_hooks.check_links.subprocess.check_output"
         )
-        self.check_output = self.subprocess_patcher.start()
-        self.check_output.return_value = self.root_temp_dir.name.encode()
+        self._check_output = self._subprocess_patcher.start()
+        self._check_output.return_value = self._root_temp_dir.name.encode()
 
     def tearDown(self) -> None:
-        self.print_error.stop()
-        self.subprocess_patcher.stop()
+        self._print_error.stop()
+        self._subprocess_patcher.stop()
 
     def _assert_success(self, contents: str) -> None:
         self.assert_exit_code(contents)
-        self.print_error.assert_not_called()
+        self._print_error.assert_not_called()
 
     def _assert_error(self, contents: str, error: str) -> None:
         self.assert_exit_code(contents, exit_code=1)
-        self.print_error.assert_called_once()
-        self.assertEqual(self.print_error.call_args.args[2], error)
+        self._print_error.assert_called_once()
+        self.assertEqual(self._print_error.call_args.args[2], error)
 
     def _write(self, filename: str, contents: str) -> None:
-        readme_path = Path(self.root_temp_dir.name).joinpath(filename)
+        readme_path = Path(self._root_temp_dir.name).joinpath(filename)
         readme_path.write_text(contents)
 
     def test_wrong_ext(self) -> None:
         self.assert_exit_code("[test](#nonexistent)\n", ext=".py")
-        self.print_error.assert_not_called()
+        self._print_error.assert_not_called()
 
     def test_bad_link(self) -> None:
+        self._assert_error(
+            "[test](#nonexistent)", "Link points at a non-existent anchor."
+        )
+
+    def test_bad_link_anchors_only(self) -> None:
+        self._flags = ["--anchors-only"]
         self._assert_error(
             "[test](#nonexistent)", "Link points at a non-existent anchor."
         )
@@ -113,6 +128,10 @@ class TestMarkdownToc(file_test_case.FileTestCase):
         self._assert_error(
             "[test](/test.md)", "Link points at a non-existent file."
         )
+
+    def test_absolute_file_missing_anchors_only(self) -> None:
+        self._flags = ["--anchors-only"]
+        self._assert_success("[test](/test.md)")
 
     def test_absolute_anchor(self) -> None:
         self._write("test.md", "# Foo")

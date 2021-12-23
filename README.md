@@ -159,6 +159,11 @@ Checked
 Checks links for correctness. For example, ensures that markdown links point at
 valid anchors within the doc.
 
+`--anchors-only` may be passed to only validate intra-document anchors. In other
+words, cross-document links such as `/foo.md#bar` will not be validated (even to
+see if foo.md exists) while `#bar` will be validated to ensure a `Bar` header
+exists within the checked document.
+
 In `.pre-commit-config.yaml`, put:
 
 ```yaml
