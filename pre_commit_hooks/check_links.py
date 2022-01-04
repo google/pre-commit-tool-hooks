@@ -73,7 +73,7 @@ class LinkCache(object):
 def _check_links(
     link_cache: LinkCache, repo_root: Path, path: str, anchors_only: bool
 ) -> bool:
-    """Updates the table of contents for a file."""
+    """Validates links in the given file, returning true on errors."""
     absolute_path = Path(path).resolve()
     anchors, links = link_cache.get(absolute_path)
 
