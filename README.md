@@ -16,7 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-This repository contains hooks for use with [pre-commit](pre-commit.com).
+This repository contains hooks for use with [pre-commit](http://pre-commit.com).
 
 <!-- toc -->
 
