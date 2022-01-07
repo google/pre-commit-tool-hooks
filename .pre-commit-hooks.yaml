@@ -23,7 +23,7 @@
   language: python
   language_version: python3
 - id: check-links
-  name: Validates links in markdown files.
+  name: Check links in markdown files
   entry: check-links
   language: python
   language_version: python3
