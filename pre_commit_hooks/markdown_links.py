@@ -51,7 +51,7 @@ def _make_label(node: Any) -> str:
 
 def _make_anchor(node: Any, used_anchors: Dict[str, int]) -> str:
     """Chooses the appropriate anchor name for a header label."""
-    # Pick out the text fragments that the anchor will be based off
+    # Pick out the text fragments that the anchor will be based off.
     label_parts: List[str] = []
     for child, _ in node.walker():
         if child.t == "code":
