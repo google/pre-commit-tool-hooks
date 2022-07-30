@@ -49,9 +49,17 @@ def _make_label(node: Any) -> str:
     return "".join(label)
 
 
-def _make_anchor(label: str, used_anchors: Dict[str, int]) -> str:
+def _make_anchor(node: Any, used_anchors: Dict[str, int]) -> str:
     """Chooses the appropriate anchor name for a header label."""
-    anchor = label.lower().strip()
+    # Pick out the text fragments that the anchor will be based off.
+    label_parts: List[str] = []
+    for child, _ in node.walker():
+        if child.t == "code":
+            label_parts.append(child.literal)
+        elif child.t == "text":
+            label_parts.append(child.literal)
+
+    anchor = "".join(label_parts).lower().strip()
     # Imitate GFM anchors. Sadly, the exact format isn't clearly documented
     # anywhere, so this based on experimentation and what others have done to
     # successfully replicate the GitHub anchor mapping.
@@ -108,7 +116,7 @@ def get_links(contents: str) -> Tuple[List[Header], List[Link]]:
             headers.append(
                 Header(
                     label,
-                    _make_anchor(label, used_anchors),
+                    _make_anchor(child, used_anchors),
                     child.level,
                 )
             )

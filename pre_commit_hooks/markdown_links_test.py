@@ -61,6 +61,35 @@ class TestMarkdownLinks(unittest.TestCase):
         )
         self.assertListEqual([], links)
 
+    def test_formatting(self) -> None:
+        contents = (
+            "## Package as `package`\n\n"
+            "## Something _italicized_\n\n"
+            "## Something **bolded**\n\n"
+            "## Some _nested **chars `here`** now_\n\n"
+        )
+        headers, links = markdown_links.get_links(contents)
+        self.assertListEqual(
+            [
+                markdown_links.Header(
+                    "Package as `package`", "package-as-package", 2
+                ),
+                markdown_links.Header(
+                    "Something _italicized_", "something-italicized", 2
+                ),
+                markdown_links.Header(
+                    "Something **bolded**", "something-bolded", 2
+                ),
+                markdown_links.Header(
+                    "Some _nested **chars `here`** now_",
+                    "some-nested-chars-here-now",
+                    2,
+                ),
+            ],
+            headers,
+        )
+        self.assertListEqual([], links)
+
     def test_duplicates(self) -> None:
         contents = "# Header\n\n## Header\n\n"
         headers, links = markdown_links.get_links(contents)

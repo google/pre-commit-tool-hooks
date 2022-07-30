@@ -94,10 +94,10 @@ class TestMarkdownToc(file_test_case.FileTestCase):
             "\n\n## Table of contents\n\n"
             "-   [Advanced Find & Replace](#advanced-find--replace)\n"
             "-   [Package as `package`](#package-as-package)\n"
-            "-   [Something _italicized_](#something-_italicized_)\n"
+            "-   [Something _italicized_](#something-italicized)\n"
             "-   [Something **bolded**](#something-bolded)\n"
             "-   [Some _nested **chars `here`** now_]"
-            "(#some-_nested-chars-here-now_)\n"
+            "(#some-nested-chars-here-now)\n"
             "\n"
         )
         body = (
