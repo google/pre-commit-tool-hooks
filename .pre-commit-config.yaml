@@ -22,7 +22,7 @@ default_language_version:
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: 38b88246ccc552bffaaf54259d064beeee434539 # frozen: v4.0.1
+    rev: 3298ddab3c13dd77d6ce1fc0baf97691430d84b0 # frozen: v4.3.0
     hooks:
       - id: check-added-large-files
       - id: check-case-conflict
@@ -40,14 +40,14 @@ repos:
     hooks:
       - id: codespell
   - repo: https://github.com/google/pre-commit-tool-hooks
-    rev: 1d04a2848ac54d64bd6474ccec69aac45fa88414 # frozen: v1.1.1
+    rev: cb78d9293306d9f737c64d9702bbaa88e157caaa # frozen: v1.2.2
     hooks:
       - id: check-copyright
       - id: check-google-doc-style
       - id: markdown-toc
   # Formatters should be run late so that they can re-format any prior changes.
   - repo: https://github.com/psf/black
-    rev: f1d4e742c91dd5179d742b0db9293c4472b765f8 # frozen: 21.12b0
+    rev: f6c139c5215ce04fd3e73a900f1372942d58eca0 # frozen: 22.6.0
     hooks:
       - id: black
   - repo: https://github.com/prettier/pre-commit
@@ -60,7 +60,7 @@ repos:
     hooks:
       - id: flake8
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: 5ecfb11dc5d24c184a754017ca3a38cb23278d26 # frozen: v0.920
+    rev: fde4bb992b03943ecb94207a52739ba07957bd06 # frozen: v0.971
     hooks:
       - id: mypy
         additional_dependencies: [types-all]
