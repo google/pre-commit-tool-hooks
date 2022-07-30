@@ -72,24 +72,18 @@ class TestMarkdownLinks(unittest.TestCase):
         self.assertListEqual(
             [
                 markdown_links.Header(
-                    "Package as `package`",
-                    "package-as-package",
-                    2
+                    "Package as `package`", "package-as-package", 2
                 ),
                 markdown_links.Header(
-                    "Something _italicized_",
-                    "something-italicized",
-                    2
+                    "Something _italicized_", "something-italicized", 2
                 ),
                 markdown_links.Header(
-                    "Something **bolded**",
-                    "something-bolded",
-                    2
+                    "Something **bolded**", "something-bolded", 2
                 ),
                 markdown_links.Header(
                     "Some _nested **chars `here`** now_",
                     "some-nested-chars-here-now",
-                    2
+                    2,
                 ),
             ],
             headers,
