@@ -60,7 +60,6 @@ class TestMarkdownLinks(unittest.TestCase):
             headers,
         )
         self.assertListEqual([], links)
-    
     def test_formatting(self) -> None:
         contents = (
             "## Package as `package`\n\n"
