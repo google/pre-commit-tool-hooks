@@ -64,8 +64,7 @@ In `.pre-commit-config.yaml`, put:
   args:
       - --copyright
       - |+
-          Copyright YYYY my organization
-          with multiple lines
+          Copyright YYYY my organizationwith multiple lines
 
 ```
 
@@ -121,6 +120,19 @@ Do:
       - ''
       - '// '
       - ''
+```
+
+`\-` is required to escape a starting `-`. For example, to get HTML-style
+comments, the closing `-->` must be escaped:
+
+```yaml
+- id: check-copyright
+  args:
+      - --custom_format
+      - '\.plist$'
+      - '<!--'
+      - ''
+      - '\-->'
 ```
 
 ### check-google-doc-style

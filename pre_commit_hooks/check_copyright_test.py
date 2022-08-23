@@ -166,3 +166,24 @@ class TestCheckCopyright(unittest.TestCase):
             f.write("? test\n")
             f.flush()
             self.assertEqual(check_copyright.main(argv=argv), 0)
+
+    def test_custom_format_escaped_dash(self) -> None:
+        with tempfile.NamedTemporaryFile(
+            suffix=".py", mode="w", delete=False
+        ) as f:
+            argv = [
+                "bin",
+                f.name,
+                "--copyright=test",
+                "--custom_format",
+                ".py",
+                "",
+                r"\- ",
+                "",
+            ]
+            f.write("non-copyright content\n")
+            f.flush()
+            self.assertEqual(check_copyright.main(argv=argv), 1)
+            f.write("- test\n")
+            f.flush()
+            self.assertEqual(check_copyright.main(argv=argv), 0)
