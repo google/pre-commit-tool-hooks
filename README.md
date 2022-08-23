@@ -122,8 +122,8 @@ Do:
       - ''
 ```
 
-`\-` is required to escape a starting `-`. For example, to get HTML-style
-comments, the closing `-->` must be escaped:
+Escaping is not generally supported, but `\-` is required to escape a starting
+`-`. For example, to get HTML-style comments, the closing `-->` must be escaped:
 
 ```yaml
 - id: check-copyright
