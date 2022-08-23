@@ -64,7 +64,8 @@ In `.pre-commit-config.yaml`, put:
   args:
       - --copyright
       - |+
-          Copyright YYYY my organizationwith multiple lines
+          Copyright YYYY my organization
+          with multiple lines
 
 ```
 
