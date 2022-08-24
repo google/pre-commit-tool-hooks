@@ -123,6 +123,19 @@ Do:
       - ''
 ```
 
+Escaping is not generally supported, but `\-` is required to escape a starting
+`-`. For example, to get HTML-style comments, the closing `-->` must be escaped:
+
+```yaml
+- id: check-copyright
+  args:
+      - --custom_format
+      - '\.plist$'
+      - '<!--'
+      - ''
+      - '\-->'
+```
+
 ### check-google-doc-style
 
 Checks documentation against the

@@ -99,7 +99,7 @@ class _CopyrightValidator(object):
         self,
         copyright: str,
         skip_pattern: str,
-        custom_formats: Optional[List[str]],
+        custom_formats: Optional[List[List[str]]],
     ) -> None:
         """Initializes the list of copyright formats and skipped paths."""
         copyright = copyright.strip("\n")
@@ -111,6 +111,11 @@ class _CopyrightValidator(object):
         self._formats: List[Tuple[re.Pattern, re.Pattern, str]] = []
         if custom_formats:
             for custom_format in custom_formats:
+                for i, x in enumerate(custom_format):
+                    # Dashes are treated as flags by argparse, so special-case
+                    # an escape.
+                    if x.startswith(r"\-"):
+                        custom_format[i] = x[1:]
                 self._add_format(copyright, *custom_format)
         for builtin_format in _BUILTIN_FORMATS:
             self._add_format(copyright, *builtin_format)
