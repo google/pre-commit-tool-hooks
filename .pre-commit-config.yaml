@@ -36,11 +36,11 @@ repos:
         args: ['--fix=lf']
       - id: trailing-whitespace
   - repo: https://github.com/codespell-project/codespell
-    rev: 01da43d753cdff4ea7dff952b4f5317450af31e3 # frozen: v2.1.0
+    rev: c6ecb9fc51571a77bc92e6c265c358aef7cb6c38 # frozen: v2.2.1
     hooks:
       - id: codespell
   - repo: https://github.com/google/pre-commit-tool-hooks
-    rev: cb78d9293306d9f737c64d9702bbaa88e157caaa # frozen: v1.2.2
+    rev: e006c8ab09f96ec32ba728b488ea5d17e1f8f6c0 # frozen: v1.2.4
     hooks:
       - id: check-copyright
       - id: check-google-doc-style
